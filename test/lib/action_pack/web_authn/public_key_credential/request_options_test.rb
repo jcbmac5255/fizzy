@@ -31,13 +31,15 @@ class ActionPack::WebAuthn::PublicKeyCredential::RequestOptionsTest < ActiveSupp
   end
 
   test "as_json" do
-    assert_equal @options.challenge, @options.as_json[:challenge]
-    assert_equal "example.com", @options.as_json[:rpId]
+    json = @options.as_json
+
+    assert_equal @options.challenge, json["challenge"]
+    assert_equal "example.com", json["rpId"]
     assert_equal [
-      { type: "public-key", id: "credential-1" },
-      { type: "public-key", id: "credential-2" }
-    ], @options.as_json[:allowCredentials]
-    assert_equal "preferred", @options.as_json[:userVerification]
+      { "type" => "public-key", "id" => "credential-1" },
+      { "type" => "public-key", "id" => "credential-2" }
+    ], json["allowCredentials"]
+    assert_equal "preferred", json["userVerification"]
   end
 
   test "as_json includes transports when present" do
@@ -52,9 +54,9 @@ class ActionPack::WebAuthn::PublicKeyCredential::RequestOptionsTest < ActiveSupp
     )
 
     assert_equal [
-      { type: "public-key", id: "cred-1", transports: [ "usb", "nfc" ] },
-      { type: "public-key", id: "cred-2", transports: [ "internal" ] }
-    ], options.as_json[:allowCredentials]
+      { "type" => "public-key", "id" => "cred-1", "transports" => [ "usb", "nfc" ] },
+      { "type" => "public-key", "id" => "cred-2", "transports" => [ "internal" ] }
+    ], options.as_json["allowCredentials"]
   end
 
   test "as_json omits transports when empty" do
@@ -66,8 +68,8 @@ class ActionPack::WebAuthn::PublicKeyCredential::RequestOptionsTest < ActiveSupp
     )
 
     assert_equal [
-      { type: "public-key", id: "cred-1" }
-    ], options.as_json[:allowCredentials]
+      { "type" => "public-key", "id" => "cred-1" }
+    ], options.as_json["allowCredentials"]
   end
 
   private
