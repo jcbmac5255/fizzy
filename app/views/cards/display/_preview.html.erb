@@ -7,10 +7,11 @@
   css_variable_counter_target: "item"
 } %>
 
+<% card_data[:action] = "mouseenter->navigable-list#hoverSelect" %>
+
 <% if card.open? %>
   <% card_data[:card_not_now_url] = card_not_now_path(card) %>
   <% card_data[:card_closure_url] = card_closure_path(card) %>
-  <% card_data[:action] = "mouseenter->navigable-list#hoverSelect" %>
   <% card_data[:card_assign_to_self_url] = card_self_assignment_path(card) %>
 <% end %>
 

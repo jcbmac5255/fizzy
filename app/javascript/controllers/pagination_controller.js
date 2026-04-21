@@ -28,8 +28,21 @@ export default class extends Controller {
     await delay(DELAY_BEFORE_OBSERVING)
 
     if (this.paginateOnIntersectionValue) {
-      this.observer = new IntersectionObserver(this.#intersect, { rootMargin: "300px", threshold: 1 })
+      const root = this.#findScrollableAncestor(this.element)
+      this.observer = new IntersectionObserver(this.#intersect, { root, rootMargin: "1500px", threshold: 1 })
     }
+  }
+
+  #findScrollableAncestor(element) {
+    let current = element.parentElement
+    while (current) {
+      const overflowY = getComputedStyle(current).overflowY
+      if (overflowY === "auto" || overflowY === "scroll") {
+        return current
+      }
+      current = current.parentElement
+    }
+    return null
   }
 
   async paginationLinkTargetConnected(linkElement) {

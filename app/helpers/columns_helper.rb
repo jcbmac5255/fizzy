@@ -37,6 +37,7 @@ module ColumnsHelper
         navigable_list_supports_horizontal_navigation_value: "false",
         navigable_list_prevent_handled_keys_value: "true",
         navigable_list_auto_select_value: "false",
+        navigable_list_auto_scroll_value: "false",
         navigable_list_actionable_items_value: "true",
         navigable_list_only_act_on_focused_items_value: "true",
         card_hotkeys_disabled: hotkeys_disabled,

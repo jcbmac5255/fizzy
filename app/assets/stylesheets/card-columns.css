@@ -28,6 +28,41 @@
     }
   }
 
+  /* Scroll columns individually on desktop: pin the whole page to the viewport,
+     let #main's 1fr row shrink, and let each expanded column's card list take the
+     remaining column height and scroll within its own bounds. */
+  @media (min-width: 640px) {
+    body.contained-scrolling {
+      block-size: 100dvh;
+      grid-template-rows: auto 1fr auto;
+      overflow: hidden;
+
+      #main {
+        display: flex;
+        flex-direction: column;
+        min-block-size: 0;
+        overflow: hidden;
+      }
+
+      .card-columns {
+        flex: 1;
+        min-block-size: 0;
+        grid-template-rows: minmax(0, 1fr);
+      }
+
+      .cards.is-expanded .cards__transition-container {
+        display: flex;
+        flex-direction: column;
+        min-block-size: 0;
+      }
+
+      .cards.is-expanded .cards__list {
+        flex: 1;
+        min-block-size: 0;
+      }
+    }
+  }
+
   /* Column container
   /* ------------------------------------------------------------------------ */
 
