@@ -15,7 +15,7 @@ bin/dev                # Start development server (runs on port 3006)
 ```
 
 Development URL: http://app.fizzy.localhost:3006
-Login with: david@example.com (development fixtures), password will appear in the browser console
+Login: enter `david@example.com` (development fixtures); the passwordless verification code is printed to the **browser** JavaScript console.
 
 ### Testing
 ```bash
@@ -46,14 +46,19 @@ bin/rails db:reset            # Drop, create, and load schema
 ### Other Utilities
 ```bash
 bin/rails dev:email          # Toggle letter_opener for email preview
+bin/rails search:reindex     # Rebuild the sharded full-text search index
+bin/rails saas:enable        # Enable SaaS mode (touches tmp/saas.txt)
+bin/rails saas:disable       # Back to OSS mode
 bin/jobs                     # Manage Solid Queue jobs
 bin/kamal deploy             # Deploy (requires 1Password CLI for secrets)
 ```
 
+Custom rake tasks live in `lib/tasks/` (`dev.rake`, `saas.rake`, `search.rake`).
+
 ## Deploy
 
 Default branch: `main`
-Pre-deploy: `bin/rails saas:enable`
+Pre-deploy: `bin/rails saas:enable` (use `bin/rails saas:disable` to revert locally)
 Deploy: `bin/kamal deploy -d <destination>`
 Destinations: production, staging, beta, beta1, beta2, beta3, beta4
 Note: `beta` is a template requiring `BETA_NUMBER` env var; typical targets are `beta1`-`beta4`.
@@ -145,6 +150,10 @@ Key recurring tasks (via `config/recurring.yml`):
 - Search records denormalized for performance
 - Models in `app/models/search/`
 
+### SaaS engine
+
+The sibling `saas/` directory is a separate Rails engine (`fizzy-saas`, with its own `app/`, `config/`, `db/`, and `test/`) that links Fizzy to 37signals' billing and production setup. It's shipped as a gem pinned via `Gemfile.saas` / `Gemfile.saas.lock`. SaaS-only features are gated at runtime by `Fizzy.saas?` (see `lib/fizzy.rb`), which checks the `SAAS` env var or the presence of `tmp/saas.txt` (toggled by `bin/rails saas:enable` / `saas:disable`). OSS-safe code lives in the top-level Rails app; code that depends on 37signals' private infrastructure (Stripe, push notifications, production billing) belongs in `saas/`.
+
 ### Imports and exports
 
 Allow people to move between OSS and SAAS Fizzy instances:
@@ -157,9 +166,18 @@ Allow people to move between OSS and SAAS Fizzy instances:
 ### Chrome MCP (Local Dev)
 
 URL: `http://app.fizzy.localhost:3006`
-Login: david@example.com (passwordless magic link auth - check rails console for link)
+Login: `david@example.com` — the verification code is printed to the browser JavaScript console on the login page.
 
 Use Chrome MCP tools to interact with the running dev app for UI testing and debugging.
+
+## Further reading
+
+Longer-form docs live in `docs/`:
+- `docs/development.md` — local setup, VAPID keys, MySQL adapter, email preview.
+- `docs/docker-deployment.md` — run a self-hosted instance from the pre-built image.
+- `docs/kamal-deployment.md` — deploy your own instance with Kamal.
+- `docs/api/` — HTTP API reference.
+- `saas/README.md` — internal 37signals SaaS engine (Stripe dev tunnel, beta/staging/prod environments).
 
 ## Coding style
 
