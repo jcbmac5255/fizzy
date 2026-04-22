@@ -11,7 +11,7 @@ module CardsHelper
 
     tag.article \
       id: id,
-      style: "--card-color: #{card.color}; view-transition-name: #{id}",
+      style: "--card-color: #{card.color}",
       class: classes,
       data: data,
       **options,
