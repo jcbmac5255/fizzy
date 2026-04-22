@@ -12,5 +12,34 @@
       inline-size: 100%;
     }
   }
-}
 
+  .color-picker__spectrum {
+    display: flex;
+    align-items: center;
+    gap: var(--inline-space);
+
+    input[type="color"] {
+      inline-size: 3em;
+      block-size: 2em;
+      padding: 0;
+      border: 1px solid var(--color-ink-lighter);
+      border-radius: 0.25em;
+      background: none;
+      cursor: pointer;
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 0.2em;
+    }
+
+    input[type="color"]::-moz-color-swatch {
+      border: none;
+      border-radius: 0.2em;
+    }
+  }
+}
