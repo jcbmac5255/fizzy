@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   resources :boards do
     scope module: :boards do
       resources :accesses, only: :index
+      resource :position, only: :update
       resource :subscriptions
       resource :involvement
       resource :publication

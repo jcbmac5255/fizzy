@@ -44,8 +44,11 @@ module FiltersHelper
     tag.strong title, class: "popup__title pad-inline-half", tabindex: "-1", data: { dialog_target: "focusTouch" }
   end
 
-  def collapsible_nav_section(title, **properties, &block)
-    tag.details class: "nav__section popup__section", data: { action: "toggle->nav-section-expander#toggle", nav_section_expander_target: "section", nav_section_expander_key_value: title.parameterize }, open: true, **properties do
+  def collapsible_nav_section(title, data: {}, **properties, &block)
+    base_data = { action: "toggle->nav-section-expander#toggle", nav_section_expander_target: "section", nav_section_expander_key_value: title.parameterize }
+    merged_data = base_data.merge(data) { |key, base, extra| key == :action ? "#{base} #{extra}" : extra }
+
+    tag.details class: "nav__section popup__section", data: merged_data, open: true, **properties do
       concat(tag.summary(class: "popup__section-title") do
         concat icon_tag "caret-down"
         concat title

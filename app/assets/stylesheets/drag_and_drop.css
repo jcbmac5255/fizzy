@@ -16,4 +16,29 @@
     transition: background-color 200ms;
     z-index: 1;
   }
+
+  .popup__handle {
+    --icon-size: 1em;
+
+    align-items: center;
+    color: var(--color-ink-medium);
+    cursor: grab;
+    display: inline-flex;
+    margin-inline-start: auto;
+    padding-inline: var(--popup-item-padding-inline, 0.5em);
+    transition: color 150ms;
+  }
+
+  .popup__handle:hover,
+  .popup__handle:focus-visible {
+    color: var(--color-ink);
+  }
+
+  .reorder__dragging {
+    opacity: 0.5;
+
+    .popup__handle {
+      cursor: grabbing;
+    }
+  }
 }

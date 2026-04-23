@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.2].define(version: 2026_02_18_120000) do
+ActiveRecord::Schema[8.2].define(version: 2026_04_23_001753) do
   create_table "accesses", id: :uuid, force: :cascade do |t|
     t.datetime "accessed_at"
     t.uuid "account_id", null: false
     t.uuid "board_id", null: false
     t.datetime "created_at", null: false
     t.string "involvement", limit: 255, default: "access_only", null: false
+    t.integer "position"
     t.datetime "updated_at", null: false
     t.uuid "user_id", null: false
     t.index ["account_id", "accessed_at"], name: "index_accesses_on_account_id_and_accessed_at"

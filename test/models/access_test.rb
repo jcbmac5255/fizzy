@@ -81,6 +81,32 @@ class AccessTest < ActiveSupport::TestCase
     assert_not card.watched_by?(kevin)
   end
 
+  test "reposition assigns dense positions in desired order" do
+    kevin = users(:kevin)
+    target = accesses(:private_kevin)
+
+    target.reposition(1)
+
+    positions = kevin.accesses.ordered_by_recently_accessed.pluck(:id, :position)
+    assert_equal [ 1, 2 ], positions.map(&:last)
+    assert_equal target.id, positions.first.first
+  end
+
+  test "reposition clamps positions outside the valid range" do
+    target = accesses(:private_kevin)
+    target.reposition(9999)
+
+    first_id = users(:kevin).accesses.ordered_by_recently_accessed.first.id
+    assert_equal accesses(:writebook_kevin).id, first_id
+  end
+
+  test "reposition leaves other users' accesses untouched" do
+    accesses(:writebook_kevin).reposition(1)
+
+    assert_nil accesses(:writebook_david).reload.position
+    assert_nil accesses(:writebook_jz).reload.position
+  end
+
   test "pins are destroyed when access is lost" do
     kevin = users(:kevin)
     board = boards(:writebook)

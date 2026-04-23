@@ -1,4 +1,9 @@
-<%= collapsible_nav_section "Boards" do %>
+<%= collapsible_nav_section "Boards",
+      data: {
+        controller: "reorder",
+        reorder_url_value: board_position_path(board_id: "__id__"),
+        action: "dragstart->reorder#dragStart dragover->reorder#dragOver drop->reorder#drop dragend->reorder#dragEnd"
+      } do %>
   <li class="popup__item" data-filter-target="item" data-navigable-list-target="item">
     <%= icon_tag "add", class: "popup__icon" %>
     <%= link_to new_board_path, class: "popup__btn btn" do %>

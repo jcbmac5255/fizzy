@@ -1,4 +1,6 @@
 module Fizzy
+  BOOT_AT = Time.now.to_i
+
   class << self
     def saas?
       return @saas if defined?(@saas)

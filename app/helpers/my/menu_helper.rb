@@ -19,8 +19,8 @@ module My::MenuHelper
   end
 
   def my_menu_board_item(board)
-    my_menu_item("board", board) do
-      link_to(tag.span(board.name, class: "overflow-ellipsis"), board, class: "popup__btn btn")
+    my_menu_item("board", board, draggable: true) do
+      link_to(tag.span(board.name, class: "overflow-ellipsis"), board, class: "popup__btn btn", draggable: false)
     end
   end
 
@@ -49,9 +49,20 @@ module My::MenuHelper
     end
   end
 
-  def my_menu_item(item, record)
-    tag.li(class: "popup__item", data: { filter_target: "item", navigable_list_target: "item", id: "filter-#{item}-#{record.id}" }) do
-      icon_tag(item, class: "popup__icon") + yield
+  def my_menu_item(item, record, draggable: false)
+    data = { filter_target: "item", navigable_list_target: "item", id: "filter-#{item}-#{record.id}" }
+
+    if draggable
+      data[:reorder_target] = "item"
+      data[:reorder_id] = record.id
+    end
+
+    tag.li(class: "popup__item", data: data) do
+      if draggable
+        capture { yield } + tag.span(icon_tag("menu"), class: "popup__handle", draggable: "true", title: "Drag to reorder")
+      else
+        icon_tag(item, class: "popup__icon") + capture { yield }
+      end
     end
   end
 end

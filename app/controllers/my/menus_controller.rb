@@ -6,6 +6,6 @@ class My::MenusController < ApplicationController
     @users = Current.account.users.active.alphabetically
     @accounts = Current.identity.accounts.active
 
-    fresh_when etag: [ @filters, @boards, @tags, @users, @accounts ]
+    fresh_when etag: [ @filters, @boards, @tags, @users, @accounts, Current.user.accesses.maximum(:updated_at), Fizzy::BOOT_AT ]
   end
 end
