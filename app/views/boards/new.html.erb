@@ -6,6 +6,13 @@
     <h1 class="txt-x-large margin-none font-weight-black"><%= @page_title %></h1>
     <%= form.text_field :name, required: true, class: "input full-width", autofocus: true, autocomplete: "off", placeholder: "Name it…", data: { form_target: "input", action: "keydown.esc@document->form#cancel", validation_message: "Board names can’t be blank" } %>
 
+    <% if @template_boards.any? %>
+      <label class="flex flex-column gap-half">
+        <span class="txt-small">Copy columns from another board <span class="txt-ink-lighter">(optional)</span></span>
+        <%= form.select :template_id, @template_boards.map { |board| [ board.name, board.id ] }, { include_blank: "Start with a blank board" }, class: "input input--select full-width" %>
+      </label>
+    <% end %>
+
     <button type="submit" class="btn btn--link center" data-bridge--form-target="submit">
       <span>Create board</span>
       <%= icon_tag "arrow-right" %>

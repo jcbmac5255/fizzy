@@ -21,10 +21,15 @@ class BoardsController < ApplicationController
 
   def new
     @board = Board.new
+    @template_boards = Current.user.boards.ordered_by_recently_accessed
   end
 
   def create
-    @board = Board.create! board_params.with_defaults(all_access: true)
+    @board = Board.transaction do
+      board = Board.create! board_params.with_defaults(all_access: true)
+      board.copy_columns_from(template_board) if template_board
+      board
+    end
 
     respond_to do |format|
       format.html { redirect_to board_path(@board) }
@@ -91,6 +96,11 @@ class BoardsController < ApplicationController
 
     def board_params
       params.expect(board: [ :name, :all_access, :auto_postpone_period_in_days, :public_description ])
+    end
+
+    def template_board
+      template_id = params.dig(:board, :template_id).presence
+      Current.user.boards.find(template_id) if template_id
     end
 
     def grantees

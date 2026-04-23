@@ -36,6 +36,29 @@ class BoardsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Remodel Punch List", board.name
   end
 
+  test "create copies columns from a template board" do
+    template = boards(:writebook)
+    expected = template.columns.sorted.pluck(:name, :color)
+
+    assert_difference -> { Board.count }, +1 do
+      post boards_path, params: { board: { name: "From template", template_id: template.id } }
+    end
+
+    board = Board.last
+    assert_equal expected, board.columns.sorted.pluck(:name, :color)
+    assert_empty board.cards
+  end
+
+  test "create rejects inaccessible template boards" do
+    logout_and_sign_in_as :david
+    inaccessible = boards(:miltons_wish_list)
+
+    assert_no_difference -> { Board.count } do
+      post boards_path, params: { board: { name: "Nope", template_id: inaccessible.id } }
+    end
+    assert_response :not_found
+  end
+
   test "edit" do
     get edit_board_path(boards(:writebook))
     assert_response :success

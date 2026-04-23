@@ -12,4 +12,10 @@ class Board < ApplicationRecord
 
   scope :alphabetically, -> { order("lower(name)") }
   scope :ordered_by_recently_accessed, -> { merge(Access.ordered_by_recently_accessed) }
+
+  def copy_columns_from(template)
+    template.columns.sorted.each do |column|
+      columns.create!(name: column.name, color: column.color)
+    end
+  end
 end
