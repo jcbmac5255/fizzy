@@ -13,6 +13,13 @@
     }
   }
 
+  .input.color-picker__hex {
+    flex: 0 0 auto;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    inline-size: 6.25em;
+    text-transform: lowercase;
+  }
+
   .color-picker__spectrum {
     display: flex;
     align-items: center;

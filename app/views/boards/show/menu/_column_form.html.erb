@@ -2,10 +2,14 @@
   <%= form.text_field :name, class: "input", placeholder: "Name this column", value: column.name,
         required: true, autocomplete: "off", pattern: ".*\\S.*", title: "Column name cannot be blank", data: { action: "focus->form#select" } %>
 
-  <label class="color-picker__spectrum">
-    <%= form.color_field :color, value: column.color.hex %>
+  <div class="color-picker__spectrum" data-controller="color-sync">
+    <%= form.color_field :color, value: column.color.hex, data: { color_sync_target: "picker", action: "input->color-sync#pickerChanged" } %>
+    <input type="text" class="input color-picker__hex" value="<%= column.color.hex %>" maxlength="7"
+      placeholder="#RRGGBB" spellcheck="false" autocomplete="off" autocapitalize="off"
+      pattern="#[0-9a-fA-F]{6}" aria-label="Column color hex code"
+      data-color-sync-target="text" data-action="input->color-sync#textChanged" />
     <span>Column color</span>
-  </label>
+  </div>
 
   <%= form.submit label, class: "btn btn--link" %>
 <% end %>
