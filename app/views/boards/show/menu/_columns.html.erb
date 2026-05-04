@@ -3,7 +3,7 @@
     <%= icon_tag "add", class: "translucent" %>
     <span class="for-screen-reader">Add a column</span>
   </button>
-  <dialog class="popup panel flex-column gap-half fill-white shadow txt-small margin-block-double" data-dialog-target="dialog">
+  <dialog class="popup popup--align-left panel flex-column gap-half fill-white shadow txt-small margin-block-double" data-dialog-target="dialog">
     <%= render "boards/show/menu/column_form", board: board, column: Column.new, label: "Add column" %>
   </dialog>
 </div>
