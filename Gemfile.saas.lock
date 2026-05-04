@@ -1,7 +1,6 @@
 GIT
   remote: https://github.com/basecamp/audits1984
-  revision: 422b8ff25820c828b7cf09aff4923fd8cc2c6795
-  branch: flavorjones/coworker-api
+  revision: 4271a8e1f02f0f35d749c938bf4dcccf902b4190
   specs:
     audits1984 (0.1.7)
       console1984
@@ -23,7 +22,7 @@ GIT
 
 GIT
   remote: https://github.com/basecamp/queenbee-plugin
-  revision: 14312a940471e20617b38cdec7c092a01567d18b
+  revision: c0119be5940edb3739d4bb591c1a5c7064881638
   specs:
     queenbee (3.2.0)
       activeresource
@@ -422,21 +421,21 @@ GEM
       net-protocol
     net-ssh (7.3.2)
     nio4r (2.7.5)
-    nokogiri (1.19.2-aarch64-linux-gnu)
+    nokogiri (1.19.3-aarch64-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.19.2-aarch64-linux-musl)
+    nokogiri (1.19.3-aarch64-linux-musl)
       racc (~> 1.4)
-    nokogiri (1.19.2-arm-linux-gnu)
+    nokogiri (1.19.3-arm-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.19.2-arm-linux-musl)
+    nokogiri (1.19.3-arm-linux-musl)
       racc (~> 1.4)
-    nokogiri (1.19.2-arm64-darwin)
+    nokogiri (1.19.3-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.19.2-x86_64-darwin)
+    nokogiri (1.19.3-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.19.2-x86_64-linux-gnu)
+    nokogiri (1.19.3-x86_64-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.19.2-x86_64-linux-musl)
+    nokogiri (1.19.3-x86_64-linux-musl)
       racc (~> 1.4)
     openssl (4.0.0)
     os (1.1.4)
