@@ -85,6 +85,7 @@ Rails.application.routes.draw do
       resource :board
       resource :closure
       resource :column
+      resource :column_position, only: :update
       resource :goldness
       resource :image
       resource :not_now

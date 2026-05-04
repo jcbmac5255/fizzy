@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import { post } from "@rails/request.js"
+import { patch, post } from "@rails/request.js"
 import { nextFrame } from "helpers/timing_helpers"
 
 export default class extends Controller {
@@ -17,6 +17,8 @@ export default class extends Controller {
     this.dragItem = this.#itemContaining(event.target)
     this.sourceContainer = this.#containerContaining(this.dragItem)
     this.originalDraggedItemCssVariable = this.#containerCssVariableFor(this.sourceContainer)
+    this.originalParent = this.dragItem.parentElement
+    this.originalNextSibling = this.dragItem.nextElementSibling
     this.dragItem.classList.add(this.draggedItemClass)
   }
 
@@ -34,13 +36,20 @@ export default class extends Controller {
       this.#applyContainerCssVariableToDraggedItem(container)
     } else {
       this.#restoreOriginalDraggedItemCssVariable()
+      this.#reorderWithinSourceContainer(event, container)
     }
   }
 
   async drop(event) {
     const targetContainer = this.#containerContaining(event.target)
 
-    if (!targetContainer || targetContainer === this.sourceContainer) { return }
+    if (!targetContainer) { return }
+
+    if (targetContainer === this.sourceContainer) {
+      this.wasDropped = true
+      await this.#submitReorderRequest(this.dragItem, targetContainer)
+      return
+    }
 
     this.wasDropped = true
     this.#increaseCounter(targetContainer)
@@ -58,12 +67,15 @@ export default class extends Controller {
 
     if (!this.wasDropped) {
       this.#restoreOriginalDraggedItemCssVariable()
+      this.#restoreOriginalDraggedItemPosition()
     }
 
     this.sourceContainer = null
     this.dragItem = null
     this.wasDropped = false
     this.originalDraggedItemCssVariable = null
+    this.originalParent = null
+    this.originalNextSibling = null
   }
 
   #itemContaining(element) {
@@ -89,6 +101,17 @@ export default class extends Controller {
     if (this.originalDraggedItemCssVariable) {
       const { name, value } = this.originalDraggedItemCssVariable
       this.dragItem.style.setProperty(name, value)
+    }
+  }
+
+  #restoreOriginalDraggedItemPosition() {
+    if (!this.originalParent || !this.dragItem) return
+    if (this.dragItem.parentElement === this.originalParent && this.dragItem.nextElementSibling === this.originalNextSibling) return
+
+    if (this.originalNextSibling && this.originalNextSibling.parentElement === this.originalParent) {
+      this.originalParent.insertBefore(this.dragItem, this.originalNextSibling)
+    } else {
+      this.originalParent.appendChild(this.dragItem)
     }
   }
 
@@ -141,6 +164,35 @@ export default class extends Controller {
     const url = container.dataset.dragAndDropUrl.replaceAll("__id__", id)
 
     return post(url, { body, headers: { Accept: "text/vnd.turbo-stream.html" } })
+  }
+
+  #reorderWithinSourceContainer(event, container) {
+    const overItem = this.#itemContaining(event.target)
+    if (!overItem || overItem === this.dragItem) return
+    if (this.#containerContaining(overItem) !== container) return
+
+    const { top, height } = overItem.getBoundingClientRect()
+    const insertBefore = event.clientY < top + height / 2
+
+    if (insertBefore && overItem.previousElementSibling !== this.dragItem) {
+      overItem.before(this.dragItem)
+    } else if (!insertBefore && overItem.nextElementSibling !== this.dragItem) {
+      overItem.after(this.dragItem)
+    }
+  }
+
+  async #submitReorderRequest(item, container) {
+    const reorderUrlTemplate = container.dataset.dragAndDropReorderUrl
+    if (!reorderUrlTemplate) return
+
+    const itemsInContainer = this.itemTargets.filter(target => this.#containerContaining(target) === container)
+    const position = itemsInContainer.indexOf(item) + 1
+    if (position < 1) return
+
+    const id = item.dataset.id
+    const url = reorderUrlTemplate.replaceAll("__id__", id)
+
+    return patch(url, { body: { position }, responseKind: "turbo-stream" })
   }
 
   #reloadSourceFrame(sourceContainer) {

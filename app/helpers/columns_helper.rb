@@ -11,7 +11,7 @@ module ColumnsHelper
       data: { turbo_frame: "_top", scroll_to_target: column == card.column && card.open? ? "target" : nil }
   end
 
-  def column_tag(id:, name:, drop_url:, collapsed: true, selected: nil, card_color: "var(--color-card-default)", data: {}, **properties, &block)
+  def column_tag(id:, name:, drop_url:, reorder_url: nil, collapsed: true, selected: nil, card_color: "var(--color-card-default)", data: {}, **properties, &block)
     classes = token_list("cards", properties.delete(:class), "is-collapsed": collapsed, "is-expanded": !collapsed)
     hotkeys_disabled = data[:card_hotkeys_disabled]
 
@@ -20,6 +20,7 @@ module ColumnsHelper
       navigable_list_target: "item",
       column_name: name,
       drag_and_drop_url: drop_url,
+      drag_and_drop_reorder_url: reorder_url,
       drag_and_drop_css_variable_name: "--card-color",
       drag_and_drop_css_variable_value: card_color
     }.merge(data)

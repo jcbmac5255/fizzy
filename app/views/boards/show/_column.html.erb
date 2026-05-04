@@ -1,4 +1,4 @@
-<%= column_tag id: dom_id(column), name: column.name, drop_url: columns_card_drops_column_path("__id__", column_id: column.id), card_color: column.color.to_s,
+<%= column_tag id: dom_id(column), name: column.name, drop_url: columns_card_drops_column_path("__id__", column_id: column.id), reorder_url: card_column_position_path(card_id: "__id__"), card_color: column.color.to_s,
       class: "cards--doing", style: "--card-color: #{column.color};",
   data: {
     drag_and_strum_target: "container",
