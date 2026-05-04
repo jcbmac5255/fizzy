@@ -29,7 +29,10 @@ export default class extends Controller {
     const container = this.#containerContaining(event.target)
     this.#clearContainerHoverClasses()
 
-    if (!container) { return }
+    if (!container) {
+      this.#stopAutoScroll()
+      return
+    }
 
     if (container !== this.sourceContainer) {
       container.classList.add(this.hoverContainerClass)
@@ -38,6 +41,8 @@ export default class extends Controller {
       this.#restoreOriginalDraggedItemCssVariable()
       this.#reorderWithinSourceContainer(event, container)
     }
+
+    this.#updateAutoScroll(event, container)
   }
 
   async drop(event) {
@@ -64,6 +69,7 @@ export default class extends Controller {
   dragEnd() {
     this.dragItem.classList.remove(this.draggedItemClass)
     this.#clearContainerHoverClasses()
+    this.#stopAutoScroll()
 
     if (!this.wasDropped) {
       this.#restoreOriginalDraggedItemCssVariable()
@@ -164,6 +170,58 @@ export default class extends Controller {
     const url = container.dataset.dragAndDropUrl.replaceAll("__id__", id)
 
     return post(url, { body, headers: { Accept: "text/vnd.turbo-stream.html" } })
+  }
+
+  #updateAutoScroll(event, container) {
+    const itemContainer = container.querySelector("[data-drag-drop-item-container]")
+    if (!itemContainer || itemContainer.scrollHeight <= itemContainer.clientHeight) {
+      this.#stopAutoScroll()
+      return
+    }
+
+    const edgeSize = 60
+    const maxSpeed = 14
+    const rect = itemContainer.getBoundingClientRect()
+    const distFromTop = event.clientY - rect.top
+    const distFromBottom = rect.bottom - event.clientY
+
+    let speed = 0
+    if (distFromTop >= 0 && distFromTop < edgeSize) {
+      speed = -Math.ceil(((edgeSize - distFromTop) / edgeSize) * maxSpeed)
+    } else if (distFromBottom >= 0 && distFromBottom < edgeSize) {
+      speed = Math.ceil(((edgeSize - distFromBottom) / edgeSize) * maxSpeed)
+    }
+
+    if (speed === 0) {
+      this.#stopAutoScroll()
+    } else {
+      this.#startAutoScroll(itemContainer, speed)
+    }
+  }
+
+  #startAutoScroll(target, speed) {
+    this.autoScrollTarget = target
+    this.autoScrollSpeed = speed
+    if (this.autoScrollFrame) return
+
+    const tick = () => {
+      if (!this.autoScrollTarget || !this.dragItem) {
+        this.autoScrollFrame = null
+        return
+      }
+      this.autoScrollTarget.scrollTop += this.autoScrollSpeed
+      this.autoScrollFrame = requestAnimationFrame(tick)
+    }
+    this.autoScrollFrame = requestAnimationFrame(tick)
+  }
+
+  #stopAutoScroll() {
+    if (this.autoScrollFrame) {
+      cancelAnimationFrame(this.autoScrollFrame)
+      this.autoScrollFrame = null
+    }
+    this.autoScrollTarget = null
+    this.autoScrollSpeed = 0
   }
 
   #reorderWithinSourceContainer(event, container) {
